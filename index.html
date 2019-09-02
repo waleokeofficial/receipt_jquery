@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link type="text/css" href="node_modules\bootstrap\dist\css\bootstrap.css" rel="stylesheet">
+    <link type="text/css" href="node_modules\fontawesome\css\all.css"  rel="stylesheet">
+    <link type="text/css" href="node_modules\bootstrap\dist\css\bootstrap.min.css"  rel="stylesheet">
+    <style>
+            ul li{
+                display: block;
+                float: left;
+                width: 200px;
+                height: 100px;
+                line-height: 110px;
+                text-align: center;
+                border-bottom: 8px solid #138496;
+                color: aliceblue;
+                font-family: 'Arial Rounded MT Bold;
+            }
+</style>
+</head>
+<body>    
+    <div class="container">        
+        <div class="card mt-5">
+                <div class="card-header ">
+                    <h1 class="card-text text-center"><i >e-Receipt</i></h1>
+                </div>
+                <div class="card-body">
+                        <div class="row">
+                                
+                                <div class="col-12  rounded" class="border-secondary">
+                                        <table class="table table-bordered table-striped" >
+                                                <thead>
+                                                    <tr class="">
+                                                            <th>S/N</th>
+                                                            <th>Items</th>
+                                                            <th>Price</th>
+                                                            <th>Quantity</th>
+                                                            <th>Total</th>
+                                                            <th>Action</th>
+                                                    </tr>
+                                                    
+                                                </thead>
+                                                <tbody>
+                                                        
+                                                        
+                                                </tbody>
+                                            </table>
+                                </div>
+                                
+                            </div>
+                            <div class="row">
+                                    
+                                <div class="col-12" style="text-align: right; margin-right: 5px;">
+                                        <div id="Warning1" class="alert alert-warning alert-dismissible mr-5 ml-5" style="text-align: center; display: none">
+                                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                                <strong>Warning!</strong><br>You can not Add enter value of <b>Item </b>
+                                        </div>
+                                        <div id="Warning2" class="alert alert-warning alert-dismissible  mr-5 ml-5" style="text-align: center; display: none">
+                                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                                <strong>Warning!</strong><br>You can not Add enter value of <b>Price </b>
+                                        </div>
+                                        
+                                        <button id="clear" class="btn btn-dark" ><i class="fa fa-minus-circle"></i></button>
+                                        <button id="plus" class="btn btn-dark" data-toggle="tooltip" title="please fill it first"> <i class="fa fa-plus-circle"></i></button>
+                                </div>
+                                
+                            </div>
+                            <div class="row">
+                                    
+                                    <div class="col-12" >
+                                            <h3 id="Ftotal" align="right" style="margin:20px;" >Total: N </h3 >  ________________________________________<br> Sinatue/Date<br>
+                                            
+                                    </div>
+                                    
+                                </div>
+
+                </div>
+                <div class="card-footer">
+                        <button id="Preview" class="btn btn-dark"> Preview<i class="fa fa-eyes"></i></button>
+                </div>
+        </div>
+        
+        
+        </div>
+   
+    <script src="node_modules\bootstrap\dist\js\bootstrap.js"></script>
+    <script src="node_modules\jquery\dist\jquery.js"></script>
+    <script src="node_modules\popper\dist\popper.min.js"></script>
+</body>
+</html>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    
+    //function declearation 
+    var grandTotal =function(){
+                        var sumTotal = 0;
+                            $("tr").find("#Total").each(function(){
+                                var innputVal = $(this).closest(this).val( );
+                                            if($.isNumeric(innputVal)) {
+                                            sumTotal +=parseFloat(innputVal)   
+                                        }
+                            $("#Ftotal").text("Total: N  "+sumTotal)                          
+                })
+            }
+
+var count = function(){
+    var serial = 0; 
+    serial++;
+    $(this).closest("tr").find("#serial").text(serial);
+  
+}
+    $(".close").click(function(){
+        $(".alert").hide();
+    })
+
+    $(document).on("keyup","#Item", function(){ $("#Warning1").hide(2000); })
+    $(document).on("keyup","#Price", function(){ $("#Warning2").hide(2000); })
+
+$(document).on("keyup","#Quantity", function(){
+                    var price =  $(this).closest("tr").find("#Price").val();
+                    var quantity = $(this).closest("tr").find("#Quantity").val();
+                    $(this).closest("tr").find("#Total").val( price * quantity);
+                    grandTotal()
+})
+
+
+$(document).on("keyup","#Price", function(){
+                            var price =  $(this).closest("tr").find("#Price").val();
+                            var quantity = $(this).closest("tr").find("#Quantity").val();
+                            $(this).closest("tr").find("#Total").val( price * quantity);
+                            
+})
+$("#plus").click(function(){
+                            
+                            var k = 0;
+                            if ($("tr").last().find("#Item").val() == '') {
+                                    $("#Warning1").show(1000);
+                            } else if ($("tr").last().find("#Price").val() == ''){
+                                $("#Warning2").show(1000);
+                            }else{
+                            $("tr").find("#Price").slice(k).attr("readonly","readonly");
+                            $("tr").find("#Quantity").slice(k).attr("readonly","editable");
+                            $("tr").find("#Items").slice(k).attr("readonly","readonly");
+                            var tr = "<tr><td><span id='serial'></span></td><td><input type='text' value='' id='Item' class='form-control form-control-sm'></td><td><input type='number' value='' id='Price' class='form-control form-control-sm' ></td><td><input type='number' value='1' id='Quantity' class='form-control form-control-sm' ></td><td><input type='number' value='' id='Total' disabled class='form-control form-control-sm' ></td><td style='width:120px'><button id='edit' class='btn btn-dark btn-sm mr-2'><i id='i1' class='fa fa-floppy-o'></i></button><button id='delete' class='btn btn-dark btn-sm mr-2'><i id='i2' class='fa fa-trash'></i></button></td></tr>";
+                            $("tbody").append(tr);
+                            count();
+                            }                           
+    }) 
+
+$(document).on("click","#delete",function(){  
+             $(this).closest("tr").remove();    
+             grandTotal();
+})
+
+ $(document).on("click","#clear",function(){
+                        var u = $(this).closest("tr").remove();
+                        serial = 0;
+                        sumTotal =0;
+                    $("tbody").empty(u);
+                    $("#Ftotal").text("Total: N  "+"")
+    })
+    $(document).on("click","#edit",function(){
+    
+        if($(this).closest("tr").find("#i1").attr('class','fa fa-edit') !== true ){
+            $(this).closest("tr").find("#Price").removeAttr("readonly","readonly");
+             $(this).closest("tr").find("#Quantity").removeAttr("readonly","editable");
+             $(this).closest("tr").find("#Items").removeAttr("readonly","readonly");    
+             $(this).closest("tr").find("#i1").attr('class','fa fa-edit');  
+        }else if ($(this).closest("tr").find("#i1").attr('class','fa fa-edit') == false){
+                    
+         //  $(this).closest("tr").find("#i1").attr('class','fa fa-floppy-o'); 
+            $(this).closest("tr").find("#Price").attr("readonly","readonly");
+            $(this).closest("tr").find("#Quantity").attr("readonly","editable");
+            $(this).closest("tr").find("#Items").att("readonly","readonly");   
+            $(this).closest("tr").find("#i1").attr('class','fa fa-edit')
+        }
+             })
+
+    
+ })
+</script>
